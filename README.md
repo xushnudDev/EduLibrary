@@ -15,6 +15,39 @@ A modern, scalable digital library management system for handling books, users, 
 - 📊 Admin Access to All User Activities
 
 ---
+## 🧱 Non-Functional Requirements (NFRs)
+
+✅ 1. Performance
+
+- The system should be able to handle 100+ concurrent users without significant performance degradation.
+
+- Average API response time should be less than 300ms under normal load.
+
+## 🔐 2. Security
+
+- All passwords must be hashed using bcrypt or a secure algorithm.
+
+- Use JWT-based authentication to protect API routes.
+
+- Prevent common attacks: SQL Injection, XSS, CSRF.
+
+- Role-based access control (RBAC): Admins can manage all data, Users are limited.
+
+## 🔄 3. Scalability
+
+- Backend is designed to be horizontally scalable.
+
+- Database relationships are normalized for future growth.
+
+- Optionally support containerization with Docker.
+
+## ♻️ 4. Maintainability
+
+- Codebase is modular, follows MVC architecture.
+
+- Routes, controllers, models, and middlewares are separated.
+
+- Easily extendable for future features (e.g., notifications, chat, payment).
 
 ## 🧩 Database Schema Overview
 
