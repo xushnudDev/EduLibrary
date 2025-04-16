@@ -70,16 +70,10 @@ Here's a simplified look at the database schema you're using (based on your [Dra
 
 ### 🔸 `categories`
 - `id` (serial)
-- `name` (varchar)
+- `name` (varchar),
+- `book_id` (FK),
 - `created_at`, `updated_at`
 
-### 🔸 `book_category` (📚↔️📂)
-- `id` (serial)
-- `book_id` (FK to books)
-- `category_id` (FK to categories)
-- `created_at`
-
-> **Many-to-Many** relationship: one book can belong to multiple categories.
 
 ### 🔸 `borrowing`
 - `id` (serial)
