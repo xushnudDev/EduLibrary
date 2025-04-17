@@ -1,13 +1,16 @@
 import bookModel from "./models/book.model.js";
 import { isValidObjectId } from "mongoose";
+import categoryModel from "../category/model/category.model.js";
 
 class BookService {
   #_bookModel;
+  #_categoryModel;
   constructor() {
     this.#_bookModel = bookModel;
+    this.#_categoryModel = categoryModel;
   };
   getAllBooks = async () => {
-    const books = await this.#_bookModel.find().populate("category");
+    const books = await this.#_bookModel.find();
     if (!books) {
       throw new Error("Books not found");
     }
@@ -43,6 +46,7 @@ class BookService {
       description,
       category,
     });
+    await this.#_categoryModel.findByIdAndUpdate(category, { $push: { books: newBook._id } });
     return {
       message: "success",
       data: newBook,
