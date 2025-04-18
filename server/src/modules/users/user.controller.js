@@ -29,7 +29,7 @@ class UserController {
   };
   loginUser = async (req, res, next) => {
     try {
-      const {user,accessToken,refreshToken} = await userService.loginUser(req.body);
+      const {data,accessToken,refreshToken} = await userService.loginUser(req.body);
       res.cookie("accessToken",accessToken,{
         httpOnly: true,
         secure: true,
@@ -42,14 +42,36 @@ class UserController {
         sameSite: "none",
         maxAge: 1000 * 60 * 60 * 24 * 1,
       });
+   
       res.status(200).send({
         message: "success",
-        data: user,
+        data
+        
       });
     } catch (error) {
       next(error);
     }
   };
+addUserReview = async (req,res,next) => {
+  try {
+    const {userId,bookId,rating,comment} = req.body;
+    const data = await userService.addUserReview({
+      userId,bookId,rating,comment
+    });
+    res.status(201).send(data);
+  } catch (error) {
+    next(error);
+  }
+};
+getUserReviews = async (req,res,next) => {
+  try {
+    const {id} = req.params;
+    const data = await userService.getUserReviews(id);
+    res.status(200).send(data);
+  } catch (error) {
+    next(error);
+  }
+};
   updateUser = async (req, res, next) => {
     try {
       const { id } = req.params;

@@ -13,3 +13,11 @@ export const loginSchema = Joi.object({
     email: Joi.string().email().required(),
     password: Joi.string().min(4).max(16).required(),
 }).required();
+
+
+export const addUserReviewSchema = Joi.object({
+    userId: Joi.string().required(),
+    bookId: Joi.string().required(),
+    rating: Joi.number().integer().min(1).max(5).required(),
+    comment: Joi.string().required(),
+});

@@ -1,5 +1,6 @@
 import { hash, compare } from "bcrypt";
 import userModel from "./models/user.model.js";
+import reviewModel from "../review/model/review.model.js";
 import { isValidObjectId } from "mongoose";
 import { BaseException } from "../../../exceptions/base.exception.js";
 import jwt from "jsonwebtoken";
@@ -7,8 +8,10 @@ import { ACCESS_TOKEN_EXPIRES_IN, ACCESS_TOKEN_SECRET, REFRESH_TOKEN_EXPIRES_IN,
 
 class UserService {
   #_userModel;
+  #_reviewModel;
   constructor() {
     this.#_userModel = userModel;
+    this.#_reviewModel = reviewModel;
   }
 
   getAllUsers = async () => {
@@ -101,6 +104,51 @@ class UserService {
       refreshToken: refreshToken
     };
   };
+  addUserReview = async ({userId,bookId,rating,comment}) => {
+    if (!isValidObjectId(userId) || !isValidObjectId(bookId)) {
+      throw new BaseException("Invalid user id", 400);
+    };
+
+    const review = await this.#_reviewModel.create({
+      userId,
+      bookId,
+      rating,
+      comment,
+    });
+
+    await this.#_userModel.findByIdAndUpdate(
+      userId,
+      { $push: { reviews: review._id } },
+      { new: true }
+    );
+    return {
+      message: "success",
+      data: review,
+    }
+  };
+
+  getUserReviews = async (userId) => {
+    if (!isValidObjectId(userId)) {
+      throw new BaseException("Invalid user id", 400);
+    };
+
+    const user = await this.#_userModel.findById(userId).populate({
+      path: "reviews",
+      populate: {
+        path: "bookId",
+        model: "Book",
+      },
+    });
+    if (!user) {
+      throw new BaseException("User not found", 404);
+    }
+    return {
+      message: "success",
+      data: user.reviews,
+      count: user.reviews.length,
+    };
+  }
+
   updateUser = async (id, { fullname, email, password,phoneNumber,role,age }) => {
     if (!isValidObjectId(id)) {
       throw new BaseException("Invalid user id", 400);

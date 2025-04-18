@@ -26,7 +26,21 @@ const bookSchema = new mongoose.Schema({
         type: mongoose.SchemaTypes.ObjectId,
         ref: "Category",
         required: true,
-    }
+    },
+    reviews: [
+        {
+            type: mongoose.SchemaTypes.ObjectId,
+            ref: "Review",
+        }
+    ],
+    averageRating: {
+        type: mongoose.SchemaTypes.Number,
+        default: 0,
+    },
+    reviewsCount: {
+        type: mongoose.SchemaTypes.Number,
+        default: 0,
+    },
 },{
     collection: "books",
     timestamps: true,

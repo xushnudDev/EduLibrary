@@ -52,7 +52,6 @@ A modern, scalable digital library management system for handling books, users, 
 ## 🧩 Database Schema Overview
 
 Here's a simplified look at the database schema you're using (based on your [DrawSQL diagram](https://drawsql.app/teams/azul-x/diagrams/e-library#)):
-
 ### 🔸 `users`
 - `id` (serial) – primary key
 - `fullname` (varchar)
@@ -66,12 +65,12 @@ Here's a simplified look at the database schema you're using (based on your [Dra
 - `title`, `author`, `genre` (varchar)
 - `published_date` (varchar)
 - `description` (varchar)
+- `category_id` (FK)
 - `created_at`, `updated_at`
 
 ### 🔸 `categories`
 - `id` (serial)
 - `name` (varchar),
-- `book_id` (FK),
 - `created_at`, `updated_at`
 
 

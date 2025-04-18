@@ -2,19 +2,20 @@ import mongoose from "mongoose";
 
 
 const reviewSchema = new mongoose.Schema({
-    bookId: {
-        type: mongoose.SchemaTypes.ObjectId,
-        ref: "Book",
-        required: true,
-    },
     userId: {
         type: mongoose.SchemaTypes.ObjectId,
         ref: "User",
         required: true,
     },
+    bookId: {
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: "Book",
+        required: true,
+    },
     rating: {
         type: mongoose.SchemaTypes.Number,
-        default: 1,
+        min: 1,
+        max: 5,
         required: true,
     },
     comment: {

@@ -30,6 +30,12 @@ const userSchema = new mongoose.Schema({
         type:mongoose.SchemaTypes.Number,
         required: true,
     },
+    reviews: [
+        {
+            type:mongoose.SchemaTypes.ObjectId,
+            ref: "Review",
+        }
+    ],
     tokens: {
         accessToken: {
             type:mongoose.SchemaTypes.String,
