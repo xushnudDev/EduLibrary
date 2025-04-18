@@ -2,6 +2,8 @@ import { hash, compare } from "bcrypt";
 import userModel from "./models/user.model.js";
 import { isValidObjectId } from "mongoose";
 import { BaseException } from "../../../exceptions/base.exception.js";
+import jwt from "jsonwebtoken";
+import { ACCESS_TOKEN_EXPIRES_IN, ACCESS_TOKEN_SECRET, REFRESH_TOKEN_EXPIRES_IN, REFRESH_TOKEN_SECRET } from "../../config/jwt.config.js";
 
 class UserService {
   #_userModel;
@@ -51,6 +53,20 @@ class UserService {
       role,
       age,
     });
+    const accessToken = jwt.sign(
+      {id: newUser.id, role: newUser.role},
+      ACCESS_TOKEN_SECRET,
+      {expiresIn: ACCESS_TOKEN_EXPIRES_IN,algorithm: "HS256"}
+    );
+    
+    
+    const refreshToken = jwt.sign(
+      {id: newUser.id, role: newUser.role},
+      REFRESH_TOKEN_SECRET,
+      {expiresIn: REFRESH_TOKEN_EXPIRES_IN,algorithm: "HS256"}
+    );
+    newUser.tokens = {accessToken, refreshToken};
+    await newUser.save();
     return {
       message: "success",
       data: newUser,
@@ -65,10 +81,24 @@ class UserService {
     const isPasswordValid = await compare(password, user.password);
     if (!isPasswordValid) {
       throw new BaseException("Invalid password", 401);
-    }
+    };
+    const accessToken = jwt.sign(
+      {id: user.id, role: user.role},
+      ACCESS_TOKEN_SECRET,
+      {expiresIn: ACCESS_TOKEN_EXPIRES_IN,algorithm: "HS256"}
+    );
+    const refreshToken = jwt.sign(
+      {id: user.id, role: user.role},
+      REFRESH_TOKEN_SECRET,
+      {expiresIn: REFRESH_TOKEN_EXPIRES_IN,algorithm: "HS256"}
+    );
+    
+    
     return {
       message: "success",
       data: user,
+      accessToken: accessToken,
+      refreshToken: refreshToken
     };
   };
   updateUser = async (id, { fullname, email, password,phoneNumber,role,age }) => {

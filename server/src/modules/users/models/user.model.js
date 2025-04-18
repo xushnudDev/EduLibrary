@@ -29,6 +29,18 @@ const userSchema = new mongoose.Schema({
     age: {
         type:mongoose.SchemaTypes.Number,
         required: true,
+    },
+    tokens: {
+        accessToken: {
+            type:mongoose.SchemaTypes.String,
+        },
+        refreshToken: {
+            type:mongoose.SchemaTypes.String,
+        },
+    },
+    token: {
+        type:mongoose.SchemaTypes.String,
+        required: false,
     }
 },{
     collection:"users",

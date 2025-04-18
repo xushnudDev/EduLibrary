@@ -29,8 +29,23 @@ class UserController {
   };
   loginUser = async (req, res, next) => {
     try {
-      const data = await userService.loginUser(req.body);
-      res.status(200).send(data);
+      const {user,accessToken,refreshToken} = await userService.loginUser(req.body);
+      res.cookie("accessToken",accessToken,{
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
+        maxAge: 1000 * 60 * 60,
+      });
+      res.cookie("refreshToken",refreshToken,{
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
+        maxAge: 1000 * 60 * 60 * 24 * 1,
+      });
+      res.status(200).send({
+        message: "success",
+        data: user,
+      });
     } catch (error) {
       next(error);
     }
