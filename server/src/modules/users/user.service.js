@@ -1,6 +1,7 @@
 import { hash, compare } from "bcrypt";
 import userModel from "./models/user.model.js";
 import { isValidObjectId } from "mongoose";
+import { BaseException } from "../../../exceptions/base.exception.js";
 
 class UserService {
   #_userModel;
@@ -12,7 +13,7 @@ class UserService {
     const users = await this.#_userModel.find();
 
     if (!users) {
-      throw new Error("Users not found");
+      throw new BaseException("Users not found", 404);
     }
     return {
       message: "success",
@@ -23,11 +24,11 @@ class UserService {
 
   getUserById = async (id) => {
     if (!isValidObjectId(id)) {
-      throw new Error("Invalid user id");
+      throw new BaseException("Invalid user id", 400);
     }
     const user = await this.#_userModel.findById(id);
     if (!user) {
-      throw new Error("User not found");
+      throw new BaseException("User not found", 404);
     }
     return {
       message: "success",
@@ -38,7 +39,7 @@ class UserService {
   registerUser = async ({ fullname, email, password,phoneNumber,role,age }) => {
     const existingUser = await this.#_userModel.findOne({ email });
     if (existingUser) {
-      throw new Error("User already exists");
+      throw new BaseException("User already exists", 400);
     }
     const hashedPassword = await hash(password, 10);
 
@@ -59,11 +60,11 @@ class UserService {
   loginUser = async ({ email, password }) => {
     const user = await this.#_userModel.findOne({ email });
     if (!user) {
-      throw new Error("User not found");
+      throw new BaseException("User not found", 404);
     }
     const isPasswordValid = await compare(password, user.password);
     if (!isPasswordValid) {
-      throw new Error("Invalid password");
+      throw new BaseException("Invalid password", 401);
     }
     return {
       message: "success",
@@ -72,7 +73,7 @@ class UserService {
   };
   updateUser = async (id, { fullname, email, password,phoneNumber,role,age }) => {
     if (!isValidObjectId(id)) {
-      throw new Error("Invalid user id");
+      throw new BaseException("Invalid user id", 400);
     }
 
     const hashedPassword = await hash(password, 10);
@@ -91,7 +92,7 @@ class UserService {
     );
 
     if (!updatedUser) {
-      throw new Error("User not found");
+      throw new BaseException("User not found", 404);
     }
 
     return {
@@ -102,11 +103,11 @@ class UserService {
 
   deleteUser = async (id) => {
     if (!isValidObjectId(id)) {
-      throw new Error("Invalid user id");
+      throw new BaseException("Invalid user id", 400);
     }
     const user = await this.#_userModel.findById(id);
     if (!user) {
-      throw new Error("User not found");
+      throw new BaseException("User not found", 404);
     }
     await this.#_userModel.findByIdAndDelete(id);
     return;
