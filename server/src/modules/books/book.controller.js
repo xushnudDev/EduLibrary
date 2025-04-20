@@ -24,7 +24,11 @@ class BookController {
     };
     createBook = async (req, res, next) => {
         try {
-            const book = await bookService.createBook(req.body);
+            const {title,author,genre,publishedYear,description,quantity,category} = req.body;
+            const imageUrl = "/uploads/" + req.file.filename;
+            const book = await bookService.createBook({
+                title,author,genre,publishedYear,imageUrl,description,quantity,category
+            });
             res.status(201).send({
                 data: book,
             });
@@ -32,10 +36,20 @@ class BookController {
             next(error);
         }
     };
-    updateBook = async (req,res,next) => {
+    updateBook = async (req, res, next) => {
         try {
             const { id } = req.params;
-            const book = await bookService.updateBook(id, req.body);
+    
+            const updatedData = {
+                ...req.body,
+            };
+    
+            if (req.file) {
+                updatedData.imageUrl = "/uploads/" + req.file.filename;
+            }
+    
+            const book = await bookService.updateBook(id, updatedData);
+    
             res.status(200).send({
                 data: book,
             });
@@ -43,6 +57,7 @@ class BookController {
             next(error);
         }
     };
+    
     deleteBook = async (req,res,next) => {
         try {
             const {id} = req.params;

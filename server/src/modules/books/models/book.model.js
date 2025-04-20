@@ -18,6 +18,10 @@ const bookSchema = new mongoose.Schema({
         type: mongoose.SchemaTypes.Number,
         required: true,
     },
+    imageUrl: {
+        type: mongoose.SchemaTypes.String,
+        required: true,
+    },
     description: {
         type: mongoose.SchemaTypes.String,
         required: true,

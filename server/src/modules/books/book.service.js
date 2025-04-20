@@ -63,7 +63,7 @@ class BookService {
       data: book,
     };
   };
-  createBook = async ({title,author,genre,publishedYear,description,quantity,category}) => {
+  createBook = async ({title,author,genre,publishedYear,imageUrl,description,quantity,category}) => {
     const existingBook = await this.#_bookModel.findOne({ title });
     if (existingBook) {
       throw new Error("Book already exists");
@@ -73,6 +73,7 @@ class BookService {
       author,
       genre,
       publishedYear,
+      imageUrl,
       description,
       quantity,
       category,
@@ -83,13 +84,13 @@ class BookService {
       data: newBook,
     };
   };
-  updateBook = async (id, { title, author, genre, publishedYear, description,quantity,category }) => {
+  updateBook = async (id, { title, author, genre, publishedYear,imageUrl,description,quantity,category }) => {
     if (!isValidObjectId(id)) {
       throw new Error("Invalid book id");
     }
     const updatedBook = await this.#_bookModel.findByIdAndUpdate(
       id,
-      { title, author, genre, publishedYear, description, quantity,category },
+      { title, author, genre, publishedYear,imageUrl,description, quantity,category },
       { new: true }
     );
     if (!updatedBook) {
