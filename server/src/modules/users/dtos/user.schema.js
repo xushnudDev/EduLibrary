@@ -14,6 +14,9 @@ export const loginSchema = Joi.object({
     password: Joi.string().min(4).max(16).required(),
 }).required();
 
+export const deleteUserSchema = Joi.object({
+    id: Joi.string().required(),
+});
 
 export const addUserReviewSchema = Joi.object({
     userId: Joi.string().required(),

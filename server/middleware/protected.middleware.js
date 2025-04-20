@@ -18,7 +18,6 @@ export const ProtectedMiddleware = (isProtected) => {
             throw new UnAuthorizedException("Unauthorized", 401);
         }
 
-        // AccessToken yo'q bo'lsa, RefreshToken bilan yangi AccessToken yaratish
         if (!accessToken && refreshToken) {
             try {
                 const data = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET);

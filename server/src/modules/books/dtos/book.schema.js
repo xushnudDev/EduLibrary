@@ -4,10 +4,10 @@ export const createBookSchema = Joi.object({
   title: Joi.string().required(),
   author: Joi.string().required(),
   genre: Joi.string().required(),
-  publishedYear: Joi.number().required(),  // faqat raqam
+  publishedYear: Joi.number().required(),  
   imageUrl: Joi.string().optional(),
   description: Joi.string().required(),
-  quantity: Joi.number().required(),  // faqat raqam
+  quantity: Joi.number().required(),
   category: Joi.string().required(),
 }).required();
 
