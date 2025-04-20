@@ -77,6 +77,7 @@ Here's a simplified look at the database schema you're using (based on your [Dra
 ### 🔸 `borrowing`
 - `id` (serial)
 - `user_id`, `book_id` (FKs)
+- `book_id` (FK)
 - `borrow_at` (timestamp)
 - `due_date` (time)
 - `returned_at` (nullable)
@@ -85,7 +86,7 @@ Here's a simplified look at the database schema you're using (based on your [Dra
 
 ### 🔸 `reviews`
 - `id` (serial)
-- `user_id`, `book_id` (FKs)
+- `user_id`, `book_id` (FKs),
 - `rating` (int)
 - `comment` (varchar)
 - `created_at`, `updated_at`

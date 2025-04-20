@@ -8,8 +8,8 @@ const bookRouter = Router();
 
 bookRouter.get("/", bookController.getAllBooks);
 bookRouter.get("/:id", bookController.getBookById);
-bookRouter.post("/", ValidationMiddleware(createBookSchema),upload.single("image"),bookController.createBook);
-bookRouter.put("/:id", ValidationMiddleware(updateBookSchema),upload.single("image"),bookController.updateBook);
+bookRouter.post("/", upload.single("imageUrl"), ValidationMiddleware(createBookSchema), bookController.createBook);
+bookRouter.put("/:id", ValidationMiddleware(updateBookSchema),upload.single("imageUrl"),bookController.updateBook);
 bookRouter.delete("/:id", bookController.deleteBook);
 
-export default bookRouter;
+export default bookRouter;  

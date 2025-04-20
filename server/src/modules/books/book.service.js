@@ -68,14 +68,15 @@ class BookService {
     if (existingBook) {
       throw new Error("Book already exists");
     }
+    
     const newBook = await this.#_bookModel.create({
       title,
       author,
       genre,
-      publishedYear,
+      publishedYear: Number(publishedYear),
       imageUrl,
       description,
-      quantity,
+      quantity: Number(quantity),
       category,
     });
     await this.#_categoryModel.findByIdAndUpdate(category, { $push: { books: newBook._id } });

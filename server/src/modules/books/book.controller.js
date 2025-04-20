@@ -25,7 +25,7 @@ class BookController {
     createBook = async (req, res, next) => {
         try {
             const {title,author,genre,publishedYear,description,quantity,category} = req.body;
-            const imageUrl = "/uploads/" + req.file.filename;
+            const imageUrl = req.file ? "/uploads/" + req.file.filename : null;
             const book = await bookService.createBook({
                 title,author,genre,publishedYear,imageUrl,description,quantity,category
             });
