@@ -109,5 +109,29 @@ getUserReviews = async (req,res,next) => {
       next(error);
     }
   };
+  forgotPassword = async (req, res, next) => {
+    try {
+      const { email } = req.body;
+      await userService.forgotPassword(email);
+      res.status(200).send({
+        message: "success",
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+  resetPassword = async (req,res,next) => {
+    try {
+      const {token} = req.query;
+      const {password} = req.body;
+      const data = await userService.resetPassword({token,password});
+      res.status(200).send({
+        message: "success",
+        data
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 export default new UserController();

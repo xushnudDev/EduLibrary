@@ -14,6 +14,8 @@ userRouter.get("/",userController.getAllUsers);
 userRouter.get("/:id",userController.getUserById);
 userRouter.put("/:id", userController.updateUser);
 userRouter.delete("/:id",userController.deleteUser);
+userRouter.post("/forgot-password",userController.forgotPassword);
+userRouter.post("/reset-password",userController.resetPassword);
 
 
 userRouter.post('/review',ValidationMiddleware(addUserReviewSchema),userController.addUserReview);

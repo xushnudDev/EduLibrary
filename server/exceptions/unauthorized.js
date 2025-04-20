@@ -1,5 +1,5 @@
-export class UnAuthorizedException extends BaseException {
-  constructor(message) {
+export class UnAuthorizedException extends Error {
+  constructor(message,statusCode) {
     super(message);
     this.isException = true;
     this.statusCode = statusCode || 401;

@@ -8,6 +8,8 @@ import jwt from "jsonwebtoken";
 import { ACCESS_TOKEN_EXPIRES_IN, ACCESS_TOKEN_SECRET, REFRESH_TOKEN_EXPIRES_IN, REFRESH_TOKEN_SECRET } from "../../config/jwt.config.js";
 import bookModel from "../books/models/book.model.js";
 import { PORT } from "../../config/app.config.js";
+import { sendMail } from "../../../utils/email.utils.js";
+import crypto, { randomBytes } from "crypto";
 
 
 class UserService {
@@ -77,7 +79,7 @@ class UserService {
     const htmlContent = `
       <div style="max-width: 600px; margin: auto; padding: 30px; font-family: Arial, sans-serif; background: #f9f9f9; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.05);">
         <div style="text-align: center;">
-          <h2 style="color: #333;">👋 Salom, ${name}!</h2>
+          <h2 style="color: #333;">👋 Salom, ${fullname}!</h2>
           <p style="font-size: 16px; color: #555;">
             Siz bizning <strong>Restoran</strong> xizmatimizga muvaffaqiyatli ro'yxatdan o'tdingiz.
           </p>
@@ -143,8 +145,9 @@ class UserService {
       REFRESH_TOKEN_SECRET,
       {expiresIn: REFRESH_TOKEN_EXPIRES_IN,algorithm: "HS256"}
     );
-    
-    
+    user.tokens = { accessToken, refreshToken };
+    await user.save();
+
     return {
       message: "success",
       data: user,
@@ -253,5 +256,41 @@ class UserService {
       message: "User and related reviews deleted successfully",
     };
   };
+  forgotPassword = async (email) => {
+    const user = await this.#_userModel.findOne({ email });
+    if (!user) {
+      throw new BaseException("User not found", 404);
+  }
+  const serverUrl = `http://localhost:${PORT}`;
+  const token = crypto.randomBytes(25);
+  user.token = token.toString("hex");
+  await user.save();
+
+  await sendMail({
+    to: email,
+    subject: "Password Reset",
+    html: ` <h2>Click Button</h2>
+        <a href="${serverUrl}/reset-password?token=${user.token}" style="background-color: green; color: white; padding:20px;border-radius:6px;">Reset Password</a>`
+  });
+  return {
+    message: "success",
+    data: user,
+  };
+};
+  resetPassword = async (token, password) => {
+    const user = await this.#_userModel.findOne({ token });
+    if (!user) {
+      throw new BaseException("Invalid token", 400);
+    }
+    const hashedPassword = await hash(password, 10);
+    user.password = hashedPassword;
+    user.token = undefined;
+    await user.save();
+    return {
+      message: "success",
+      data: user,
+    };
+  }
 }
+
 export default new UserService();

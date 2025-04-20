@@ -8,7 +8,6 @@ export const RolesMiddleware = (...roles) => {
         if (roles.includes(ROLES.ALL)) {
             return next();
         }
-        console.log("User role:", userRole);
 
         if (!userRole) {
             return res.status(401).json({
