@@ -8,12 +8,22 @@ import { ErrorHandlerMiddleware } from '../middleware/error.handling.middleware.
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import { fileURLToPath } from 'url';
+import morgan from 'morgan';
+import methodOverride from 'method-override';
 
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+
+app.use(methodOverride('_method'));
+
+
+if (process.env.NODE_ENV?.trim() === 'development') {
+    app.use(morgan('tiny'));
+}
+
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
