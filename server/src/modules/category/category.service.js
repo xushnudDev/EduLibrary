@@ -1,3 +1,5 @@
+import { BaseException } from "../../../exceptions/base.exception.js";
+import logger from "../../config/winston.config.js";
 import categoryModel from "./model/category.model.js";
 import { isValidObjectId } from "mongoose"; 
 
@@ -9,7 +11,8 @@ class CategoryService {
     getAllCategories = async () => {
         const categories = await this.#_categoryModel.find().populate("books");
         if (!categories) {
-            throw new Error("Categories not found");
+            logger.error("Categories not found");
+            throw new BaseException("Categories not found");
         }
         return {
             message: "success",
@@ -19,11 +22,11 @@ class CategoryService {
     };
     getCategoryById = async (id) => {
         if (!isValidObjectId(id)) {
-            throw new Error("Invalid category id");
+            throw new BaseException("Invalid category id");
         }
         const category = await this.#_categoryModel.findById(id).populate("books");
         if (!category) {
-            throw new Error("Category not found");
+            throw new BaseException("Category not found");
         }
         return {
             message: "success",
@@ -33,7 +36,7 @@ class CategoryService {
     createCategory = async ({ name }) => {
         const existingCategory = await this.#_categoryModel.findOne({ name });
         if (existingCategory) {
-            throw new Error("Category already exists");
+            throw new BaseException("Category already exists");
         }
         const newCategory = await this.#_categoryModel.create({
             name,
@@ -45,7 +48,7 @@ class CategoryService {
     };
     updateCategory = async (id, {name}) => {
         if (!isValidObjectId(id)) {
-            throw new Error("Invalid category id");
+            throw new BaseException("Invalid category id");
         }
         const updatedCategory = await this.#_categoryModel.findByIdAndUpdate(
             id,
@@ -55,7 +58,7 @@ class CategoryService {
             { new: true }
         );
         if (!updatedCategory) {
-            throw new Error("Category not found");
+            throw new BaseException("Category not found");
         }
         return {
             message: "success",
@@ -64,11 +67,11 @@ class CategoryService {
     };
     deleteCategory = async (id) => {
         if (!isValidObjectId(id)) {
-            throw new Error("Invalid category id");
+            throw new BaseException("Invalid category id");
         }
         const category = await this.#_categoryModel.findById(id);
         if (!category) {
-            throw new Error("Category not found");
+            throw new BaseException("Category not found");
         };
         await this.#_categoryModel.findByIdAndDelete(id);
         return {

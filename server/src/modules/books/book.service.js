@@ -2,6 +2,8 @@ import bookModel from "./models/book.model.js";
 import { isValidObjectId } from "mongoose";
 import categoryModel from "../category/model/category.model.js";
 import { BaseException } from "../../../exceptions/base.exception.js";
+import { prohibitedGenres } from "../../constants/prohibited.genres.js";
+import logger from "../../config/winston.config.js";
 
 class BookService {
   #_bookModel;
@@ -52,11 +54,13 @@ class BookService {
   };
   getBookById = async (id) => {
     if (!isValidObjectId(id)) {
-      throw new Error("Invalid book id");
+      logger.error("Invalid book id");
+      throw new BaseException("Invalid book id");
     }
     const book = await this.#_bookModel.findById(id).populate("category");
     if (!book) {
-      throw new Error("Book not found");
+      logger.error("Book not found");
+      throw new BaseException("Book not found");
     }
     return {
       message: "success",
@@ -66,8 +70,15 @@ class BookService {
   createBook = async ({title,author,genre,publishedYear,imageUrl,description,quantity,category}) => {
     const existingBook = await this.#_bookModel.findOne({ title });
     if (existingBook) {
-      throw new Error("Book already exists");
+      logger.error("Book already exists");
+      throw new BaseException("Book already exists");
     }
+
+    if (prohibitedGenres.some(word => genre.toLowerCase().includes(word))) {
+      logger.error("Genre is prohibited");
+      throw new BaseException("Genre is prohibited", 400);
+    }
+    
     
     const newBook = await this.#_bookModel.create({
       title,
@@ -95,7 +106,8 @@ class BookService {
       { new: true }
     );
     if (!updatedBook) {
-      throw new Error("Book not found");
+      logger.error("Book not found");
+      throw new BaseException("Book not found");
     }
     return {
       message: "success",
@@ -104,11 +116,11 @@ class BookService {
   };
   deleteBook = async (id) => {
     if (!isValidObjectId(id)) {
-      throw new Error("Invalid book id");
+      throw new BaseException("Invalid book id");
     }
     const book = await this.#_bookModel.findById(id);
     if (!book) {
-      throw new Error("Book not found");
+      throw new BaseException("Book not found");
     }
     await this.#_bookModel.findByIdAndDelete(id);
     return {
