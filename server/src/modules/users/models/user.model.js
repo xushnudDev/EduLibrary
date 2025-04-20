@@ -36,6 +36,12 @@ const userSchema = new mongoose.Schema({
             ref: "Review",
         }
     ],
+    borrowings: [
+        {
+            type:mongoose.SchemaTypes.ObjectId,
+            ref: "Borrowing",
+        }
+    ],
     tokens: {
         accessToken: {
             type:mongoose.SchemaTypes.String,

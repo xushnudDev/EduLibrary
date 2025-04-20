@@ -1,21 +1,33 @@
 import { hash, compare } from "bcrypt";
 import userModel from "./models/user.model.js";
 import reviewModel from "../review/model/review.model.js";
+import borrowingModel from "../borrowing/model/borrowing.model.js";
 import { isValidObjectId } from "mongoose";
 import { BaseException } from "../../../exceptions/base.exception.js";
 import jwt from "jsonwebtoken";
 import { ACCESS_TOKEN_EXPIRES_IN, ACCESS_TOKEN_SECRET, REFRESH_TOKEN_EXPIRES_IN, REFRESH_TOKEN_SECRET } from "../../config/jwt.config.js";
+import bookModel from "../books/models/book.model.js";
+import { PORT } from "../../config/app.config.js";
+
 
 class UserService {
   #_userModel;
   #_reviewModel;
+  #_bookModel;
   constructor() {
     this.#_userModel = userModel;
     this.#_reviewModel = reviewModel;
+    this.#_bookModel = bookModel;
   }
 
   getAllUsers = async () => {
-    const users = await this.#_userModel.find();
+    const users = await this.#_userModel.find().populate("reviews").populate({
+      path: "borrowings",
+      populate: {
+        path: "bookId",
+        model: "Book",
+      },
+    });
 
     if (!users) {
       throw new BaseException("Users not found", 404);
@@ -31,7 +43,13 @@ class UserService {
     if (!isValidObjectId(id)) {
       throw new BaseException("Invalid user id", 400);
     }
-    const user = await this.#_userModel.findById(id);
+    const user = await this.#_userModel.findById(id).populate("reviews").populate({
+      path: "borrowings",
+      populate: {
+        path: "bookId",
+        model: "Book",
+      },
+    });
     if (!user) {
       throw new BaseException("User not found", 404);
     }
@@ -56,6 +74,36 @@ class UserService {
       role,
       age,
     });
+    const htmlContent = `
+      <div style="max-width: 600px; margin: auto; padding: 30px; font-family: Arial, sans-serif; background: #f9f9f9; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.05);">
+        <div style="text-align: center;">
+          <h2 style="color: #333;">👋 Salom, ${name}!</h2>
+          <p style="font-size: 16px; color: #555;">
+            Siz bizning <strong>Restoran</strong> xizmatimizga muvaffaqiyatli ro'yxatdan o'tdingiz.
+          </p>
+        </div>
+        <div style="margin: 30px 0;">
+          <p style="font-size: 15px; color: #444;">
+            Endi siz menyuni ko‘rib chiqish, buyurtma berish va ko‘plab imtiyozlarga ega bo‘lishingiz mumkin!
+          </p>
+        </div>
+        <div style="text-align: center; margin-bottom: 30px;">
+          <a href="http://localhost:${PORT}/menu" style="background-color: #4CAF50; color: white; text-decoration: none; padding: 12px 25px; border-radius: 5px; font-size: 16px;">
+            Menyuga o'tish
+          </a>
+        </div>
+        <div style="font-size: 13px; color: #888; text-align: center;">
+          <p>Agar bu email sizga bexosdan kelgan bo‘lsa, e’tiborsiz qoldiring.</p>
+          <p>&copy; 2025 Restoran Loyihasi</p>
+        </div>
+      </div>
+    `;
+    await sendMail({
+      to: email,
+      subject: "Welcome!",
+      html: htmlContent,
+    });
+
     const accessToken = jwt.sign(
       {id: newUser.id, role: newUser.role},
       ACCESS_TOKEN_SECRET,
@@ -183,12 +231,27 @@ class UserService {
     if (!isValidObjectId(id)) {
       throw new BaseException("Invalid user id", 400);
     }
+  
     const user = await this.#_userModel.findById(id);
     if (!user) {
       throw new BaseException("User not found", 404);
     }
+  
+    const userReviews = await reviewModel.find({ userId: id });
+  
+    for (const review of userReviews) {
+      await this.#_bookModel.findByIdAndUpdate(review.bookId, {
+        $pull: { reviews: review._id },
+      });
+    }
+  
+    await reviewModel.deleteMany({ userId: id });
+  
     await this.#_userModel.findByIdAndDelete(id);
-    return;
+  
+    return {
+      message: "User and related reviews deleted successfully",
+    };
   };
 }
 export default new UserService();

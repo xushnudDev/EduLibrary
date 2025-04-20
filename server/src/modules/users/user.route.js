@@ -4,6 +4,7 @@ import {registerSchema,loginSchema, addUserReviewSchema} from "./dtos/user.schem
 import { ValidationMiddleware } from "../../../middleware/validation.middleware.js";
 import { RolesMiddleware } from "../../../middleware/roles.middleware.js";
 import { ROLES } from "../../constants/role.constant.js";
+import { ProtectedMiddleware } from "../../../middleware/protected.middleware.js";
 
 const userRouter = Router();
 

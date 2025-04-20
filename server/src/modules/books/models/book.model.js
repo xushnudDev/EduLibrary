@@ -4,15 +4,15 @@ import mongoose from "mongoose";
 const bookSchema = new mongoose.Schema({
     title: {
         type: mongoose.SchemaTypes.String,
-        required: true,
+        required: false,
     },
     author: {
         type: mongoose.SchemaTypes.String,
-        required: true,
+        required: false,
     },
     genre: {
         type: mongoose.SchemaTypes.String,
-        required: true,
+        required: false,
     },
     publishedYear: {
         type: mongoose.SchemaTypes.Number,
@@ -20,6 +20,10 @@ const bookSchema = new mongoose.Schema({
     },
     description: {
         type: mongoose.SchemaTypes.String,
+        required: true,
+    },
+    quantity: {
+        type: mongoose.SchemaTypes.Number,
         required: true,
     },
     category: {

@@ -7,6 +7,8 @@ import { addReviewSchema, updateReviewSchema } from "./dtos/review.schema.js";
 const reviewRouter = Router();
 
 reviewRouter.post("/", ValidationMiddleware(addReviewSchema),reviewController.addReview);
-reviewRouter.get("/:id",reviewController.getReviews);
+reviewRouter.get("/",reviewController.getReviews);
 reviewRouter.put("/:id",ValidationMiddleware(updateReviewSchema),reviewController.updateReview);
-reviewRouter.delete("/:id",reviewController.deleteReview);
+reviewRouter.delete("/:reviewId",reviewController.deleteReview);
+
+export default reviewRouter;

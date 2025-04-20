@@ -10,10 +10,8 @@ class BookService {
     this.#_categoryModel = categoryModel;
   };
   getAllBooks = async () => {
-    const books = await this.#_bookModel.find();
-    if (!books) {
-      throw new Error("Books not found");
-    }
+    const books = await this.#_bookModel.find().populate("reviews")
+
     return {
       message: "success",
       count: books.length,
@@ -33,7 +31,7 @@ class BookService {
       data: book,
     };
   };
-  createBook = async ({title,author,genre,publishedYear,description,category}) => {
+  createBook = async ({title,author,genre,publishedYear,description,quantity,category}) => {
     const existingBook = await this.#_bookModel.findOne({ title });
     if (existingBook) {
       throw new Error("Book already exists");
@@ -44,6 +42,7 @@ class BookService {
       genre,
       publishedYear,
       description,
+      quantity,
       category,
     });
     await this.#_categoryModel.findByIdAndUpdate(category, { $push: { books: newBook._id } });
@@ -52,13 +51,13 @@ class BookService {
       data: newBook,
     };
   };
-  updateBook = async (id, { title, author, genre, publishedYear, description, category }) => {
+  updateBook = async (id, { title, author, genre, publishedYear, description,quantity,category }) => {
     if (!isValidObjectId(id)) {
       throw new Error("Invalid book id");
     }
     const updatedBook = await this.#_bookModel.findByIdAndUpdate(
       id,
-      { title, author, genre, publishedYear, description, category },
+      { title, author, genre, publishedYear, description, quantity,category },
       { new: true }
     );
     if (!updatedBook) {

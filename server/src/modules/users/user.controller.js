@@ -21,12 +21,31 @@ class UserController {
 
   registerUser = async (req, res, next) => {
     try {
-      const data = await userService.registerUser(req.body);
-      res.status(201).send(data);
+      const { data, accessToken, refreshToken } = await userService.registerUser(req.body);
+  
+      res.cookie("accessToken", accessToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
+        maxAge: 1000 * 60 * 60,
+      });
+  
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
+        maxAge: 1000 * 60 * 60 * 24,
+      });
+  
+      res.status(201).send({
+        message: "success",
+        data
+      });
     } catch (error) {
       next(error);
     }
   };
+  
   loginUser = async (req, res, next) => {
     try {
       const {data,accessToken,refreshToken} = await userService.loginUser(req.body);

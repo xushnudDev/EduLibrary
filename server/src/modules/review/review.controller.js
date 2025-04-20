@@ -12,8 +12,7 @@ class ReviewController {
     };
     getReviews = async (req,res,next) => {
         try {
-            const {userId} = req.params;
-            const data = await reviewService.getReviews(userId);
+            const data = await reviewService.getReviews();
             res.status(200).send(data);
         } catch (error) {
             next(error);
