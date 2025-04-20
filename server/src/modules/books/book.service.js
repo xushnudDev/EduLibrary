@@ -1,6 +1,7 @@
 import bookModel from "./models/book.model.js";
 import { isValidObjectId } from "mongoose";
 import categoryModel from "../category/model/category.model.js";
+import { BaseException } from "../../../exceptions/base.exception.js";
 
 class BookService {
   #_bookModel;
@@ -9,13 +10,44 @@ class BookService {
     this.#_bookModel = bookModel;
     this.#_categoryModel = categoryModel;
   };
-  getAllBooks = async () => {
-    const books = await this.#_bookModel.find().populate("reviews")
+  getAllBooks = async (query) => {
+
+    let {limit = 10,page = 1,sortField='created_at',sortOrder='asc',title,author,genre,publishedYear,quantity,category} = query;
+
+    if (Array.isArray(limit) || Array.isArray(page)) {
+      throw new BaseException("Limit must be array", 400);
+    };
+    limit = Number(limit) || 10;
+    page = Number(page) || 1;
+
+    if (!Number.isInteger(limit) || !Number.isInteger(page) || limit <= 0 || page <= 0) {
+      throw new BaseException('Limit and page must be positive integers',400);
+    };
+
+    const sortFieldArr = ["title","author","genre","publishedYear","quantity","category","created_at"];
+    const sortOrderArr = ["asc","desc"];
+    if (!sortFieldArr.includes(sortField)) sortField = 'created_at';
+    if (!sortOrderArr.includes(sortOrder)) sortOrder = 'asc';
+
+    let filter = {};
+
+    if (title) filter.title = { $regex: new RegExp(title, "i") };
+    if (author) filter.author = { $regex: new RegExp(author, "i") };
+    if (genre) filter.genre = { $regex: new RegExp(genre, "i") };
+    if (publishedYear) filter.publishedYear = publishedYear;
+    if (quantity) filter.quantity = quantity;
+    if (category) filter.category = { $regex: new RegExp(category, "i") };
+
+    const books = await this.#_bookModel.find(filter).populate("category").sort({ [sortField]: sortOrder }).skip((page - 1) * limit).limit(limit);
+    const totalBooks = await this.#_bookModel.countDocuments(filter);
 
     return {
       message: "success",
-      count: books.length,
       data: books,
+      totalBooks,
+      totalPages: Math.ceil(totalBooks / limit),
+      currentPage: page,
+      limit,
     };
   };
   getBookById = async (id) => {

@@ -3,7 +3,7 @@ import bookService from "./book.service.js";
 class BookController {
     getAllBooks = async (req,res,next) => {
         try {
-            const books = await bookService.getAllBooks();
+            const books = await bookService.getAllBooks(req.query);
             res.status(200).send({
                 data: books,
             });

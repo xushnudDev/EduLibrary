@@ -83,22 +83,22 @@ class UserService {
         <div style="text-align: center;">
           <h2 style="color: #333;">👋 Salom, ${fullname}!</h2>
           <p style="font-size: 16px; color: #555;">
-            Siz bizning <strong>Restoran</strong> xizmatimizga muvaffaqiyatli ro'yxatdan o'tdingiz.
+            You registered successfully for <strong>Library</strong>
           </p>
         </div>
         <div style="margin: 30px 0;">
           <p style="font-size: 15px; color: #444;">
-            Endi siz menyuni ko‘rib chiqish, buyurtma berish va ko‘plab imtiyozlarga ega bo‘lishingiz mumkin!
+            now, you can login to your account using the following credentials:
           </p>
         </div>
         <div style="text-align: center; margin-bottom: 30px;">
-          <a href="http://localhost:${PORT}/menu" style="background-color: #4CAF50; color: white; text-decoration: none; padding: 12px 25px; border-radius: 5px; font-size: 16px;">
-            Menyuga o'tish
+          <a href="http://localhost:${PORT}" style="background-color: #4CAF50; color: white; text-decoration: none; padding: 12px 25px; border-radius: 5px; font-size: 16px;">
+            Passing to E-library
           </a>
         </div>
         <div style="font-size: 13px; color: #888; text-align: center;">
-          <p>Agar bu email sizga bexosdan kelgan bo‘lsa, e’tiborsiz qoldiring.</p>
-          <p>&copy; 2025 Restoran Loyihasi</p>
+          <p>If this email has reached you in error, please ignore it.</p>
+          <p>&copy; Online Library</p>
         </div>
       </div>
     `;
