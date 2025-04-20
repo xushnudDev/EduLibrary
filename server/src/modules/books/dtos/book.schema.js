@@ -6,6 +6,7 @@ export const createBookSchema = Joi.object({
   genre: Joi.string().required(),
   publishedYear: Joi.number().required(),
   description: Joi.string().required(),
+  quantity: Joi.number().required(),
   category: Joi.string().required(),
 }).required();
 
@@ -15,4 +16,6 @@ export const updateBookSchema = Joi.object({
   genre: Joi.string(),
   year: Joi.number(),
   description: Joi.string(),
+  quantity: Joi.number(),
+  category: Joi.string(),
 }).required();

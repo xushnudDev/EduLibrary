@@ -13,7 +13,30 @@ class BorrowingService {
     this.#_borrowingModel = borrowingModel;
     this.#_bookModel = bookModel;
     this.#_userModel = userModel;
-  }
+  };
+
+  getAllBorrowings = async () => {
+    const borrowings = await this.#_borrowingModel.find();
+    return {
+        data: borrowings,
+    }
+  };
+
+  updateBorrowing = async (borrowingId, { borrowDate, returnDate }) => {
+    if (!isValidObjectId(borrowingId)) {
+      throw new BaseException("Invalid borrowing ID format", 400);
+    };
+    const borrowing = await this.#_borrowingModel.findById(borrowingId);
+    if (!borrowing) {
+      throw new BaseException("Borrowing not found", 404);
+    }
+    borrowing.borrowDate = borrowDate;
+    borrowing.returnDate = returnDate;
+    await borrowing.save();
+    return {
+      data: borrowing,
+    };
+  };
 
   borrowBooks = async ({ userId, bookId, borrowDate, returnDate }) => {
     if (!isValidObjectId(userId) || !isValidObjectId(bookId)) {
@@ -31,8 +54,8 @@ class BorrowingService {
     }
 
     const borrowing = await this.#_borrowingModel.create({
-      user: userId,
-      book: bookId,
+      userId: userId,
+      bookId: bookId,
       borrowDate,
       returnDate,
     });

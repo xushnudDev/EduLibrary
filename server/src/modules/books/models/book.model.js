@@ -37,14 +37,7 @@ const bookSchema = new mongoose.Schema({
             ref: "Review",
         }
     ],
-    averageRating: {
-        type: mongoose.SchemaTypes.Number,
-        default: 0,
-    },
-    reviewsCount: {
-        type: mongoose.SchemaTypes.Number,
-        default: 0,
-    },
+    
 },{
     collection: "books",
     timestamps: true,

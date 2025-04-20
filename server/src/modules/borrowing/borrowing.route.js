@@ -7,7 +7,8 @@ import { Router } from "express";
 
 const borrowingRouter = Router();
 
-borrowingRouter.post("/borrow", ValidationMiddleware(borrowSchema), RolesMiddleware(ROLES.USER), borrowingController.borrowBooks);
-borrowingRouter.post("/return", ValidationMiddleware(returnSchema), RolesMiddleware(ROLES.USER), borrowingController.returnBook);
-
+borrowingRouter.post("/", ValidationMiddleware(borrowSchema), RolesMiddleware(ROLES.ALL), borrowingController.borrowBooks);
+borrowingRouter.post("/return", ValidationMiddleware(returnSchema), RolesMiddleware(ROLES.ALL), borrowingController.returnBook);
+borrowingRouter.get("/",borrowingController.getAllBorrowings);
+borrowingRouter.patch("/:id",borrowingController.updateBorrowing);
 export default borrowingRouter;
