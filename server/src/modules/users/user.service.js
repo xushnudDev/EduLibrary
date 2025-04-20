@@ -16,10 +16,12 @@ class UserService {
   #_userModel;
   #_reviewModel;
   #_bookModel;
+  #_borrowingModel;
   constructor() {
     this.#_userModel = userModel;
     this.#_reviewModel = reviewModel;
     this.#_bookModel = bookModel;
+    this.#_borrowingModel = borrowingModel;
   }
 
   getAllUsers = async () => {
