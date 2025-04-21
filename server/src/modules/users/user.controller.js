@@ -124,7 +124,7 @@ getUserReviews = async (req,res,next) => {
     try {
       const {token} = req.query;
       const {password} = req.body;
-      const data = await userService.resetPassword({token,password});
+      const data = await userService.resetPassword(token,password);
       res.status(200).send({
         message: "success",
         data

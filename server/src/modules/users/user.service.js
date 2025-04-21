@@ -272,27 +272,38 @@ class UserService {
     to: email,
     subject: "Password Reset",
     html: ` <h2>Click Button</h2>
-        <a href="${serverUrl}/reset-password?token=${user.token}" style="background-color: green; color: white; padding:20px;border-radius:6px;">Reset Password</a>`
+        <a href="${serverUrl}/api/users/reset-password?token=${user.token}" style="background-color: green; color: white; padding:20px;border-radius:6px;">Reset Password</a>`
   });
   return {
     message: "success",
     data: user,
   };
 };
-  resetPassword = async (token, password) => {
-    const user = await this.#_userModel.findOne({ token });
-    if (!user) {
-      throw new BaseException("Invalid token", 400);
-    }
-    const hashedPassword = await hash(password, 10);
-    user.password = hashedPassword;
-    user.token = null;
-    await user.save();
-    return {
-      message: "success",
-      data: user,
-    };
+resetPassword = async (token, password) => {
+  
+  
+  if (typeof token !== "string") {
+      throw new BaseException("Token must be a string", 400);
   }
+
+  const user = await this.#_userModel.findOne({ token });
+  if (!user) {
+    throw new BaseException("Invalid token", 400);
+  }
+
+  const hashedPassword = await hash(password, 10);
+
+  user.password = hashedPassword;
+  user.token = null;
+
+  await user.save();
+
+  return {
+    message: "success",
+    data: user,
+  };
+};
+
 }
 
 export default new UserService();
