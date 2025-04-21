@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createBookSchema,updateBookSchema } from "./dtos/book.schema.js";
+import { createBookSchema,updateBookSchema,deleteBookSchema } from "./dtos/book.schema.js";
 import { ValidationMiddleware } from "../../../middleware/validation.middleware.js";
 import bookController from "./book.controller.js";
 import upload from "../../../utils/upload.utils.js";
@@ -11,8 +11,8 @@ const bookRouter = Router();
 
 bookRouter.get("/", bookController.getAllBooks);
 bookRouter.get("/:id", bookController.getBookById);
-bookRouter.post("/",ProtectedMiddleware(true),RolesMiddleware(ROLES.ADMIN),upload.single("imageUrl"), ValidationMiddleware(createBookSchema), bookController.createBook);
+bookRouter.post("/",ProtectedMiddleware(true),RolesMiddleware(ROLES.ALL),upload.single("imageUrl"), ValidationMiddleware(createBookSchema), bookController.createBook);
 bookRouter.put("/:id", ValidationMiddleware(updateBookSchema),upload.single("imageUrl"),bookController.updateBook);
-bookRouter.delete("/:id", bookController.deleteBook);
+bookRouter.delete("/:id",ProtectedMiddleware(true),RolesMiddleware(ROLES.ADMIN),bookController.deleteBook);
 
-export default bookRouter;  
+export default bookRouter;

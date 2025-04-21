@@ -286,7 +286,7 @@ class UserService {
     }
     const hashedPassword = await hash(password, 10);
     user.password = hashedPassword;
-    user.token = undefined;
+    user.token = null;
     await user.save();
     return {
       message: "success",

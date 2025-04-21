@@ -22,3 +22,9 @@ export const updateBookSchema = Joi.object({
   quantity: Joi.number(),
   category: Joi.string(),
 }).required();
+
+
+export const deleteBookSchema = Joi.object({
+  id: Joi.string().required(),
+}).required();
+
