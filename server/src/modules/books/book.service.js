@@ -4,6 +4,7 @@ import categoryModel from "../category/model/category.model.js";
 import { BaseException } from "../../../exceptions/base.exception.js";
 import { prohibitedGenres } from "../../constants/prohibited.genres.js";
 import logger from "../../config/winston.config.js";
+import { prohibitedTitles } from "../../constants/prohibited.titles.js";
 
 class BookService {
   #_bookModel;
@@ -74,10 +75,17 @@ class BookService {
       throw new BaseException("Book already exists");
     }
 
+
+    if (prohibitedTitles.some(word => title.toLowerCase().includes(word))) {
+      logger.error("Title is prohibited");
+      throw new BaseException("Title is prohibited", 400);
+    };
+
     if (prohibitedGenres.some(word => genre.toLowerCase().includes(word))) {
       logger.error("Genre is prohibited");
       throw new BaseException("Genre is prohibited", 400);
     }
+    
     
     
     const newBook = await this.#_bookModel.create({
